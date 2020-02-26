@@ -20,6 +20,25 @@ public class LevelGenerator : MonoBehaviour
     public int nbBossRoom;
     public int nbLevelUpRoom;
 
+    [Space(10)]
+    [Header("Placement des prefabs")]
+    [Tooltip("roomSpace correspond à la distance entre deux room. aka la taille d'une room")]
+    public float roomSpace;
+    public List<GameObject> T;
+    public List<GameObject> R;
+    public List<GameObject> B;
+    public List<GameObject> L;
+    public List<GameObject> TR;
+    public List<GameObject> TB;
+    public List<GameObject> TL;
+    public List<GameObject> RL;
+    public List<GameObject> BL;
+    public List<GameObject> RBL;
+    public List<GameObject> TRB;
+    public List<GameObject> TBL;
+    public List<GameObject> TRL;
+    public List<GameObject> TRBL;
+
     //2D array of the room layout
     private LayoutRoom[,] rooms;
     private List<LayoutRoom> spawnedRooms;
@@ -69,9 +88,109 @@ public class LevelGenerator : MonoBehaviour
         DisplayLayout();
     }
 
+    public void PutRoomOfInterest()
+    {
+        //choix de la room de boss
+        LayoutRoom bossRoom = FindFurthestRoom();
+        bossRoom.RoomType = 1;
+        Debug.Log("Boss Room placée en : " + bossRoom.Position);
+    }
 
 
 
+    public void PlaceRoomPrefabs()
+    {
+        foreach (LayoutRoom room in spawnedRooms)
+        {
+            bool[] neighbors = ScanNeighborsAtPos(room.Position);
+            string neighborComposition = "";
+
+            if (neighbors[0] == true) neighborComposition += 'T';
+            if (neighbors[1] == true) neighborComposition += 'R';
+            if (neighbors[2] == true) neighborComposition += 'B';
+            if (neighbors[3] == true) neighborComposition += 'L';
+
+            GameObject chosenPrefab = null;
+            switch (neighborComposition)
+            {
+                case "T":
+                    chosenPrefab = T[Random.Range(0, T.Count)];
+                    break;
+                case "R":
+                    chosenPrefab = R[Random.Range(0, R.Count)];
+                    break;
+                case "B":
+                    chosenPrefab = B[Random.Range(0, B.Count)];
+                    break;
+                case "L":
+                    chosenPrefab = L[Random.Range(0, L.Count)];
+                    break;
+                case "TR":
+                    chosenPrefab = TR[Random.Range(0, TR.Count)];
+                    break;
+                case "TB":
+                    chosenPrefab = TB[Random.Range(0, TB.Count)];
+                    break;
+                case "TL":
+                    chosenPrefab = TL[Random.Range(0, TL.Count)];
+                    break;
+                case "RL":
+                    chosenPrefab = RL[Random.Range(0, RL.Count)];
+                    break;
+                case "BL":
+                    chosenPrefab = BL[Random.Range(0, BL.Count)];
+                    break;
+                case "TRB":
+                    chosenPrefab = TRB [Random.Range(0, TRB.Count)];
+                    break;
+                case "TRL":
+                    chosenPrefab = TRL[Random.Range(0, TRL.Count)];
+                    break;
+                case "TBL":
+                    chosenPrefab = TBL[Random.Range(0, TBL.Count)];
+                    break;
+                case "RBL":
+                    chosenPrefab = RBL[Random.Range(0, RBL.Count)];
+                    break;
+                case "TRBL":
+                    chosenPrefab = TRBL[Random.Range(0, TRBL.Count)];
+                    break;
+                default:
+                    Debug.Log("Le string est mal construit");
+                    break;
+            }
+            Instantiate(chosenPrefab, new Vector3(room.Position.x * roomSpace, room.Position.y * roomSpace, 0), Quaternion.identity);
+
+        }
+    }
+
+
+
+
+
+
+
+
+    /// <summary>
+    /// parcours toutes les room et retourne la plus éloignée. Si il y en a plusieurs, retourne la première occurence.
+    /// </summary>
+    /// <returns></returns>
+    public LayoutRoom FindFurthestRoom()
+    {
+        LayoutRoom furthestRoom = null;
+        int currentMaxDistance = -1;
+
+        foreach (LayoutRoom room in spawnedRooms)
+        {
+            if (furthestRoom == null || room.Distance > currentMaxDistance)
+            {
+                furthestRoom = room;
+                currentMaxDistance = room.Distance;
+            }
+        }
+
+        return furthestRoom;
+    }
 
 
 
@@ -108,20 +227,6 @@ public class LevelGenerator : MonoBehaviour
             i++;
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     public void Init()
@@ -406,6 +511,28 @@ public class LevelGenerator : MonoBehaviour
         if (spawnedRooms.Exists(r => r.Position == right)) { neighbors.Add(spawnedRooms.Find(r => r.Position == right)); }
         if (spawnedRooms.Exists(r => r.Position == down)) { neighbors.Add(spawnedRooms.Find(r => r.Position == down)); }
         if (spawnedRooms.Exists(r => r.Position == left)) { neighbors.Add(spawnedRooms.Find(r => r.Position == left)); }
+
+        return neighbors;
+    }
+
+    /// <summary>
+    /// retourne un tableau de booléen indiquant s'il y a des voisin en haut, en bas, à droite ou à gauche
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
+    public bool[] ScanNeighborsAtPos(Vector2Int pos)
+    {
+        bool[] neighbors = new bool[4] { false, false, false, false};
+
+        Vector2Int up = pos + new Vector2Int(0, 1);
+        Vector2Int right = pos + new Vector2Int(1, 0);
+        Vector2Int down = pos + new Vector2Int(0, -1);
+        Vector2Int left = pos + new Vector2Int(-1, 0);
+
+        if (spawnedRooms.Exists(r => r.Position == up)) { neighbors[0] = true; }
+        if (spawnedRooms.Exists(r => r.Position == right)) { neighbors[1] = true; }
+        if (spawnedRooms.Exists(r => r.Position == down)) { neighbors[2] = true; }
+        if (spawnedRooms.Exists(r => r.Position == left)) { neighbors[3] = true; }
 
         return neighbors;
     }

@@ -16,15 +16,27 @@ public class LevelGeneratorEditor : Editor
             UnityEditor.SceneView.RepaintAll();
         }
 
-        if (GUILayout.Button("Clear"))
-        {
-            levelGenerator.ClearLayout();
-            UnityEditor.SceneView.RepaintAll();
-        }
-
         if (GUILayout.Button("Dijkstra"))
         {
             levelGenerator.Dijkstra();
+            UnityEditor.SceneView.RepaintAll();
+        }
+
+        if (GUILayout.Button("PutRoomOfInterest"))
+        {
+            levelGenerator.PutRoomOfInterest();
+            UnityEditor.SceneView.RepaintAll();
+        }
+
+        if (GUILayout.Button("Place Rooms"))
+        {
+            levelGenerator.PlaceRoomPrefabs();
+            UnityEditor.SceneView.RepaintAll();
+        }
+
+        if (GUILayout.Button("Clear"))
+        {
+            levelGenerator.ClearLayout();
             UnityEditor.SceneView.RepaintAll();
         }
     }

@@ -8,7 +8,7 @@ using UnityEngine;
 public class LayoutRoom
 {
     private Vector2Int position; //Grid position of trhe room (not world position)
-    private int roomType;
+    private int roomType; //0 room normal, 1 boss room
     private int distance;
     private int nbNeighbors = 0;
 

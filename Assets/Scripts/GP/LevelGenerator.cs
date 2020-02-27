@@ -33,6 +33,7 @@ public class LevelGenerator : MonoBehaviour
     public List<GameObject> TL;
     public List<GameObject> RL;
     public List<GameObject> BL;
+    public List<GameObject> RB;
     public List<GameObject> RBL;
     public List<GameObject> TRB;
     public List<GameObject> TBL;
@@ -103,6 +104,19 @@ public class LevelGenerator : MonoBehaviour
         foreach (LayoutRoom room in spawnedRooms)
         {
             bool[] neighbors = ScanNeighborsAtPos(room.Position);
+            int cpt = 0;
+            for (int i = 0; i < neighbors.Length; i++)
+            {
+                if (neighbors[i])
+                {
+                    cpt++;
+                }
+            }
+
+            if (cpt == 0)
+            {
+                Debug.Log("0 abrutis");
+            }
             string neighborComposition = "";
 
             if (neighbors[0] == true) neighborComposition += 'T';
@@ -127,6 +141,9 @@ public class LevelGenerator : MonoBehaviour
                     break;
                 case "TR":
                     chosenPrefab = TR[Random.Range(0, TR.Count)];
+                    break;
+                case "RB":
+                    chosenPrefab = RB[Random.Range(0, RB.Count)];
                     break;
                 case "TB":
                     chosenPrefab = TB[Random.Range(0, TB.Count)];
@@ -156,7 +173,7 @@ public class LevelGenerator : MonoBehaviour
                     chosenPrefab = TRBL[Random.Range(0, TRBL.Count)];
                     break;
                 default:
-                    Debug.Log("Le string est mal construit");
+                    Debug.Log("Le string est mal construit : " +neighborComposition);
                     break;
             }
             Instantiate(chosenPrefab, new Vector3(room.Position.x * roomSpace, room.Position.y * roomSpace, 0), Quaternion.identity);
@@ -574,6 +591,13 @@ public class LevelGenerator : MonoBehaviour
         GameObject[] squares = GameObject.FindGameObjectsWithTag("DebugSquare");
 
         foreach (GameObject go in squares)
+        {
+            DestroyImmediate(go);
+        }
+
+        GameObject[] rooms = GameObject.FindGameObjectsWithTag("Room");
+
+        foreach (GameObject go in rooms)
         {
             DestroyImmediate(go);
         }
